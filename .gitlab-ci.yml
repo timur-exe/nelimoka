@@ -1,0 +1,160 @@
+stages:
+  - before
+  - update
+  - parse
+  - categories
+  - commit
+  - create_mr
+  - backup
+  - diff_after_merge
+
+variables:
+  BRANCH_NAME: "update-submodules_${CI_COMMIT_SHA}"
+  REPO_URL: "git.vsecoder.dev/root/limoka.git"
+  GITLAB_TOKEN: $GITLAB_TOKEN
+  GIT_DEPTH: 0 
+
+image: python:3.9
+
+before_run:
+  stage: before
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: on_success
+    - when: never
+  script:
+    - pip install requests
+    - git config --global user.email "gitlab_admin_9dee57@example.com"
+    - git config --global user.name "Administrator"
+    - git fetch origin
+    - git checkout main
+    - git remote set-url origin "https://oauth2:${GITLAB_TOKEN}@${REPO_URL}"
+    - echo "Синхронизируем main с origin/main..."
+    - git reset --hard origin/main
+    - echo "Удаляем ветку ${BRANCH_NAME} из удалённого репозитория..."
+    - git push origin --delete ${BRANCH_NAME} || echo "Ветка ${BRANCH_NAME} не существовала или не удалось удалить"
+    - echo "Удаляем локальную ветку ${BRANCH_NAME}, если она существует..."
+    - git branch -D ${BRANCH_NAME} || echo "Локальная ветка ${BRANCH_NAME} не существовала"
+    - git checkout -b ${BRANCH_NAME}
+    - echo "Создаём новую ветку ${BRANCH_NAME}..."
+    - git push origin ${BRANCH_NAME} --force || echo "Ошибка при создании ветки"
+
+update_repos:
+  stage: update
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: on_success
+    - when: never
+  script:
+    - git checkout ${BRANCH_NAME}
+    - echo "Cloning and update repositories..."
+    - python3 clone_repos.py
+    - git add *
+    - git commit -m "Added and updated repositories $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for commit"
+    - git remote set-url origin "https://oauth2:${GITLAB_TOKEN}@${REPO_URL}"
+    - git push origin ${BRANCH_NAME} --force
+
+parse:
+  stage: parse
+  rules:
+    - if: '($CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_EVENT_TYPE == "merged") || $CI_COMMIT_BRANCH == "main"'
+      when: on_success
+    - when: never
+  script:
+    - echo "Запускаем parse после мержа MR..."
+    - git fetch origin
+    - git checkout main
+    - git reset --hard origin/main
+    - python3 parse.py
+    - python3 -m venv venv
+    - source venv/bin/activate
+    - pip install --upgrade pip
+    - pip install scikit-learn tqdm
+    - python3 categories.py
+    - git add modules.json
+    - git commit -m "Updated modules.json after merge $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for modules.json"
+    - git remote set-url origin "https://oauth2:${GITLAB_TOKEN}@${REPO_URL}"
+    - git push origin main
+
+commit_changes:
+  stage: commit
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: on_success
+    - when: never
+  script:
+    - git checkout ${BRANCH_NAME}
+    - git add * || echo "No changes"
+    - git commit -m "Финальный коммит $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for final commit"
+    - git remote set-url origin "https://oauth2:${GITLAB_TOKEN}@${REPO_URL}"
+    - git push origin ${BRANCH_NAME} --force
+
+create_merge_request:
+  stage: create_mr
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: on_success
+    - when: never
+  script:
+    - echo "Checking branch status before MR..."
+    - git fetch origin
+    - git log ${BRANCH_NAME} -1
+    - git diff origin/main origin/${BRANCH_NAME} || echo "No diff between main and ${BRANCH_NAME}"
+    - echo "Creating Merge Request..."
+    - |
+      curl --request POST \
+           --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+           --data "source_branch=${BRANCH_NAME}" \
+           --data "target_branch=main" \
+           --data "title=Update of repositories $(date +'%Y-%m-%d %H:%M:%S')" \
+           "https://git.vsecoder.dev/api/v4/projects/root%2Flimoka/merge_requests" \
+           || echo "MR creating failure"
+
+backup:
+  stage: backup
+  needs: ["parse"]
+  script:
+    - echo "$TELEGRAM_BOT_TOKEN"
+    - echo "Creating .zip file of the repository with maximum compression..."
+    - git archive --format=zip --output=$CI_PROJECT_DIR/repository-original.zip HEAD
+    - zip -9 $CI_PROJECT_DIR/repository.zip $CI_PROJECT_DIR/repository-original.zip
+    - rm $CI_PROJECT_DIR/repository-original.zip
+    - echo "File size of the created .zip file:"
+    - du -sh $CI_PROJECT_DIR/repository.zip
+    - echo "Splitting the .zip file into 8 parts..."
+    - split -b 49M $CI_PROJECT_DIR/repository.zip $CI_PROJECT_DIR/repository-part-
+    - echo "Files created after split:"
+    - ls $CI_PROJECT_DIR/repository-part-*
+    - |
+        COMMIT_MESSAGE="$(git log -1 --pretty=%B)"
+        COMMIT_DATE="$(date --date="$(git log -1 --pretty=%ci)" +'%Y-%m-%d %H:%M:%S')"
+        COMMIT_HASH="$(git rev-parse --short=6 HEAD)"
+        COMMIT_URL="https://git.vsecoder.dev/root/limoka/commit/$(git rev-parse HEAD)"
+        MESSAGE="Commit Date: $COMMIT_DATE, Commit Message: $COMMIT_MESSAGE, Commit Hash: [\`$COMMIT_HASH\`]($COMMIT_URL)"
+        
+        echo "Sending .zip file parts to Telegram..."
+        
+        FIRST_PART=true
+        for part in $(ls $CI_PROJECT_DIR/repository-part-* | sort); do
+          if $FIRST_PART; then
+            TELEGRAM_API_URL="https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument"
+            echo "Отправка первого файла на Telegram: $TELEGRAM_API_URL"
+            curl -X POST "$TELEGRAM_API_URL" \
+              -F chat_id=$TELEGRAM_CHAT_ID \
+              -F document=@$part \
+              -F caption="$MESSAGE" \
+              -F parse_mode="Markdown"
+            FIRST_PART=false
+          else
+            TELEGRAM_API_URL="https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument"
+            echo "Отправка файла на Telegram: $TELEGRAM_API_URL"
+            curl -X POST "$TELEGRAM_API_URL" \
+              -F chat_id=$TELEGRAM_CHAT_ID \
+              -F document=@$part
+          fi
+        done
+        
+    - echo "Files sent to Telegram successfully!"
+  only:
+    - main
+
