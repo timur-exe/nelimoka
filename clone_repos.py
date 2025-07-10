@@ -48,7 +48,7 @@ repos = [
     "https://github.com/cryptexctl/modules-mirror",
     "https://github.com/Ruslan-Isaev/modules",
     "https://github.com/shadowhikka/sh.modules",
-    "https://github.com/fiksofficial/python-modules/blob/main/"
+    "https://github.com/fiksofficial/python-modules"
 ]
 
 
