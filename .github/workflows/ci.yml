@@ -1,40 +1,44 @@
 name: CI Pipeline
 
+# Triggers for the workflow
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs daily at midnight
+    - cron: '0 0 * * *' # Runs daily at midnight UTC
   push:
     branches:
       - main
   pull_request:
     branches:
       - main
-  workflow_dispatch: # Добавлено для ручного запуска
+  workflow_dispatch: # Allows manual triggering from GitHub UI
 
+# Environment variables available to all jobs
 env:
   BRANCH_NAME: "update-submodules_${{ github.sha }}"
-  REPO_URL: "github.com/root/limoka.git"
-  GIT_DEPTH: 0
+  REPO_URL: "github.com/MuRuLOSE/limoka.git" # Updated repository URL
+  GIT_DEPTH: 0 # Fetch full history for Git operations
 
 jobs:
   before:
     runs-on: ubuntu-latest
+    # Run on schedule or manual dispatch
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
-      - name: Set up Python
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: pip install requests
-      - name: Configure Git
+      - name: Configure Git for github-actions[bot]
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-      - name: Sync main branch
+      - name: Sync main branch and create new branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -53,14 +57,16 @@ jobs:
 
   update:
     runs-on: ubuntu-latest
+    # Run on schedule or manual dispatch
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: before
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
           ref: ${{ env.BRANCH_NAME }}
-      - name: Set up Python
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
@@ -78,16 +84,18 @@ jobs:
 
   parse:
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) || github.event_name == 'workflow_dispatch'
+    # Run on push to main, merged PR, or manual dispatch
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
-      - name: Set up Python
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-      - name: Configure Git
+      - name: Configure Git for github-actions[bot]
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
@@ -107,19 +115,21 @@ jobs:
           python3 categories.py
           git add modules.json
           git commit -m "Updated modules.json after merge $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for modules.json"
-          git remote set-url origin "https://x-access-token:${GGithub_TOKEN}@${REPO_URL}"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@${REPO_URL}"
           git push origin main
 
   commit:
     runs-on: ubuntu-latest
+    # Run on schedule or manual dispatch
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: update
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
           ref: ${{ env.BRANCH_NAME }}
-      - name: Configure Git
+      - name: Configure Git for github-actions[bot]
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
@@ -135,10 +145,12 @@ jobs:
 
   create_pr:
     runs-on: ubuntu-latest
+    # Run on schedule or manual dispatch
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: commit
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
       - name: Create Pull Request
@@ -154,13 +166,15 @@ jobs:
 
   backup:
     runs-on: ubuntu-latest
-    needs: parse
+    # Run on main branch or manual dispatch
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    needs: parse
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
-      - name: Create and send backup
+      - name: Create and send backup to Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
