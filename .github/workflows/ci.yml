@@ -1,0 +1,205 @@
+name: CI Pipeline
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  BRANCH_NAME: "update-submodules_${{ github.sha }}"
+  REPO_URL: "github.com/root/limoka.git"
+  GIT_DEPTH: 0
+
+jobs:
+  before:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: pip install requests
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+      - name: Sync main branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git fetch origin
+          git checkout main
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@${REPO_URL}"
+          echo "Synchronizing main with origin/main..."
+          git reset --hard origin/main
+          echo "Deleting remote branch ${BRANCH_NAME}..."
+          git push origin --delete ${BRANCH_NAME} || echo "Branch ${BRANCH_NAME} did not exist or could not be deleted"
+          echo "Deleting local branch ${BRANCH_NAME}..."
+          git branch -D ${BRANCH_NAME} || echo "Local branch ${BRANCH_NAME} did not exist"
+          git checkout -b ${BRANCH_NAME}
+          echo "Creating new branch ${BRANCH_NAME}..."
+          git push origin ${BRANCH_NAME} --force || echo "Error creating branch"
+
+  update:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    needs: before
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
+          ref: ${{ env.BRANCH_NAME }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Clone and update repositories
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git checkout ${BRANCH_NAME}
+          echo "Cloning and updating repositories..."
+          python3 clone_repos.py
+          git add .
+          git commit -m "Added and updated repositories $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for commit"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@${REPO_URL}"
+          git push origin ${BRANCH_NAME} --force
+
+  parse:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+      - name: Run parse scripts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Running parse after merge..."
+          git fetch origin
+          git checkout main
+          git reset --hard origin/main
+          python3 parse.py
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install scikit-learn tqdm
+          python3 categories.py
+          git add modules.json
+          git commit -m "Updated modules.json after merge $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for modules.json"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@${REPO_URL}"
+          git push origin main
+
+  commit:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    needs: update
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
+          ref: ${{ env.BRANCH_NAME }}
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+      - name: Final commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git checkout ${BRANCH_NAME}
+          git add . || echo "No changes"
+          git commit -m "Final commit $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for final commit"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@${REPO_URL}"
+          git push origin ${BRANCH_NAME} --force
+
+  create_pr:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    needs: commit
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
+      - name: Create Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking branch status before PR..."
+          git fetch origin
+          git log ${BRANCH_NAME} -1
+          git diff origin/main origin/${BRANCH_NAME} || echo "No diff between main and ${BRANCH_NAME}"
+          echo "Creating Pull Request..."
+          gh pr create --base main --head ${BRANCH_NAME} --title "Update of repositories $(date +'%Y-%m-%d %H:%M:%S')" --body "Automated PR for repository updates"
+
+  backup:
+    runs-on: ubuntu-latest
+    needs: parse
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
+      - name: Create and send backup
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          echo "Creating .zip file of the repository with maximum compression..."
+          git archive --format=zip --output=repository-original.zip HEAD
+          zip -9 repository.zip repository-original.zip
+          rm repository-original.zip
+          echo "File size of the created .zip file:"
+          du -sh repository.zip
+          echo "Splitting the .zip file into 8 parts..."
+          split -b 49M repository.zip repository-part-
+          echo "Files created after split:"
+          ls repository-part-*
+          COMMIT_MESSAGE="$(git log -1 --pretty=%B)"
+          COMMIT_DATE="$(date --date="$(git log -1 --pretty=%ci)" +'%Y-%m-%d %H:%M:%S')"
+          COMMIT_HASH="$(git rev-parse --short=6 HEAD)"
+          COMMIT_URL="https://${REPO_URL}/commit/$(git rev-parse HEAD)"
+          MESSAGE="Commit Date: $COMMIT_DATE, Commit Message: $COMMIT_MESSAGE, Commit Hash: [\`$COMMIT_HASH\`]($COMMIT_URL)"
+          
+          echo "Sending .zip file parts to Telegram..."
+          
+          FIRST_PART=true
+          for part in $(ls repository-part-* | sort); do
+            if $FIRST_PART; then
+              TELEGRAM_API_URL="https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument"
+              echo "Sending first file to Telegram: $TELEGRAM_API_URL"
+              curl -X POST "$TELEGRAM_API_URL" \
+                -F chat_id=$TELEGRAM_CHAT_ID \
+                -F document=@$part \
+                -F caption="$MESSAGE" \
+                -F parse_mode="Markdown"
+              FIRST_PART=false
+            else
+              TELEGRAM_API_URL="https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument"
+              echo "Sending file to Telegram: $TELEGRAM_API_URL"
+              curl -X POST "$TELEGRAM_API_URL" \
+                -F chat_id=$TELEGRAM_CHAT_ID \
+                -F document=@$part
+            fi
+          done
+          
+          echo "Files sent to Telegram successfully!"
