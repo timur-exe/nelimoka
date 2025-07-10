@@ -161,10 +161,16 @@ jobs:
         run: |
           echo "Checking branch status before PR..."
           git fetch origin
-          git log ${BRANCH_NAME} -1
-          git diff origin/main origin/${BRANCH_NAME} || echo "No diff between main and ${BRANCH_NAME}"
-          echo "Creating Pull Request..."
-          gh pr create --base main --head ${BRANCH_NAME} --title "Update of repositories $(date +'%Y-%m-%d %H:%M:%S')" --body "Automated PR for repository updates"
+          # Check if the branch exists in the remote repository
+          if git ls-remote --exit-code --heads origin ${BRANCH_NAME} >/dev/null 2>&1; then
+            echo "Branch ${BRANCH_NAME} exists in remote repository."
+            git log origin/${BRANCH_NAME} -1 || echo "Failed to view log for ${BRANCH_NAME}"
+            git diff origin/main origin/${BRANCH_NAME} || echo "No diff between main and ${BRANCH_NAME}"
+            echo "Creating Pull Request..."
+            gh pr create --base main --head ${BRANCH_NAME} --title "Update of repositories $(date +'%Y-%m-%d %H:%M:%S')" --body "Automated PR for repository updates" || echo "Failed to create PR"
+          else
+            echo "Branch ${BRANCH_NAME} does not exist in remote repository, skipping PR creation."
+          fi
 
   backup:
     runs-on: ubuntu-latest
