@@ -15,7 +15,7 @@ on:
 # Environment variables available to all jobs
 env:
   BRANCH_NAME: "update-submodules_${{ github.sha }}"
-  REPO_URL: "github.com/MuRuLOSE/limoka.git" # Updated repository URL
+  REPO_URL: "github.com/MuRuLOSE/limoka.git" # Repository URL
   GIT_DEPTH: 0 # Fetch full history for Git operations
 
 jobs:
@@ -70,6 +70,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+      - name: Install Python dependencies
+        run: pip install requests
       - name: Clone and update repositories
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
