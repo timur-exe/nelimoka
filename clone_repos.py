@@ -47,7 +47,8 @@ repos = [
     "https://github.com/TheKsenon/MyHikkaModules",
     "https://github.com/cryptexctl/modules-mirror",
     "https://github.com/Ruslan-Isaev/modules",
-    "https://github.com/shadowhikka/sh.modules"
+    "https://github.com/shadowhikka/sh.modules",
+    "https://github.com/fiksofficial/python-modules/blob/main/"
 ]
 
 
