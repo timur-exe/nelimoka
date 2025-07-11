@@ -76,23 +76,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git checkout ${BRANCH_NAME}
+          git checkout ${{ env.BRANCH_NAME }}
           echo "Cloning and updating repositories..."
-          python3 clone_repos.py
+          python3 clone_repos.py || echo "Error running clone_repos.py, continuing with commit and push"
           git add .
           git commit -m "Added and updated repositories $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for commit"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@${REPO_URL}"
-          git push origin ${BRANCH_NAME} --force
+          git push origin ${{ env.BRANCH_NAME }} --force
 
   parse:
     runs-on: ubuntu-latest
-    # Run on push to main, merged PR, or manual dispatch
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    # Run on schedule, manual dispatch, push to main, or merged PR
+    if: |
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true)
+    needs: update
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
+          ref: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' && env.BRANCH_NAME || 'main' }}
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
@@ -105,10 +111,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Running parse after merge..."
+          echo "Running parse after update..."
           git fetch origin
-          git checkout main
-          git reset --hard origin/main
+          git checkout ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' && env.BRANCH_NAME || 'main' }}
+          git reset --hard origin/${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' && env.BRANCH_NAME || 'main' }}
           python3 -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
@@ -116,15 +122,15 @@ jobs:
           python3 parse.py
           python3 categories.py
           git add modules.json
-          git commit -m "Updated modules.json after merge $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for modules.json"
+          git commit -m "Updated modules.json after parse $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for modules.json"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@${REPO_URL}"
-          git push origin main
+          git push origin ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' && env.BRANCH_NAME || 'main' }}
 
   commit:
     runs-on: ubuntu-latest
     # Run on schedule or manual dispatch
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    needs: update
+    needs: parse
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -139,11 +145,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git checkout ${BRANCH_NAME}
+          git checkout ${{ env.BRANCH_NAME }}
           git add . || echo "No changes"
           git commit -m "Final commit $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for final commit"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@${REPO_URL}"
-          git push origin ${BRANCH_NAME} --force
+          git push origin ${{ env.BRANCH_NAME }} --force
 
   create_pr:
     runs-on: ubuntu-latest
@@ -162,14 +168,14 @@ jobs:
           echo "Checking branch status before PR..."
           git fetch origin
           # Check if the branch exists in the remote repository
-          if git ls-remote --exit-code --heads origin ${BRANCH_NAME} >/dev/null 2>&1; then
-            echo "Branch ${BRANCH_NAME} exists in remote repository."
-            git log origin/${BRANCH_NAME} -1 || echo "Failed to view log for ${BRANCH_NAME}"
-            git diff origin/main origin/${BRANCH_NAME} || echo "No diff between main and ${BRANCH_NAME}"
+          if git ls-remote --exit-code --heads origin ${{ env.BRANCH_NAME }} >/dev/null 2>&1; then
+            echo "Branch ${{ env.BRANCH_NAME }} exists in remote repository."
+            git log origin/${{ env.BRANCH_NAME }} -1 || echo "Failed to view log for ${{ env.BRANCH_NAME }}"
+            git diff origin/main origin/${{ env.BRANCH_NAME }} || echo "No diff between main and ${{ env.BRANCH_NAME }}"
             echo "Creating Pull Request..."
-            gh pr create --base main --head ${BRANCH_NAME} --title "Update of repositories $(date +'%Y-%m-%d %H:%M:%S')" --body "Automated PR for repository updates" || echo "Failed to create PR"
+            gh pr create --base main --head ${{ env.BRANCH_NAME }} --title "Update of repositories $(date +'%Y-%m-%d %H:%M:%S')" --body "Automated PR for repository updates" || echo "False to create PR"
           else
-            echo "Branch ${BRANCH_NAME} does not exist in remote repository, skipping PR creation."
+            echo "Branch ${{ env.BRANCH_NAME }} does not exist in remote repository, skipping PR creation."
           fi
 
   backup:
