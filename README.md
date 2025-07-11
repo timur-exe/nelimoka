@@ -9,6 +9,8 @@ Limoka serves as a centralized library, enabling users to enhance their Telegram
 ## Technology Stack
 
 - **Python**: Core language for module development, leveraging Python's simplicity and extensive ecosystem.
+- **Aiohttp**: For some requests to limoka repository
+- **Whoosh**: Search engine
 - **Hikka**: The userbot framework that Limoka modules extend, built on Telethon for Telegram API interactions.
 - **Git**: Version control for managing the repository and community contributions.
 - **CI/CD Tools**: Automated pipelines for testing and deploying module updates (see Infrastructure section).
