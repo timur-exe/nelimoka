@@ -51,7 +51,6 @@ repos = [
     "https://github.com/fiksofficial/python-modules"
 ]
 
-
 def is_repo_public(repo_url):
     result = subprocess.run(
         ["git", "ls-remote", repo_url],
@@ -60,7 +59,6 @@ def is_repo_public(repo_url):
     )
     return result.returncode == 0
 
-
 def is_repo_accessible(repo_url):
     try:
         response = requests.head(repo_url, timeout=5)
@@ -68,11 +66,9 @@ def is_repo_accessible(repo_url):
     except requests.RequestException:
         return False
 
-
 def is_valid_filename(filename):
     invalid_chars = r'[<>:"/\\|?*]'
     return not re.search(invalid_chars, filename)
-
 
 def rename_invalid_files(local_path):
     for root, dirs, files in os.walk(local_path):
@@ -84,10 +80,8 @@ def rename_invalid_files(local_path):
                 os.rename(old_path, new_path)
                 print(f"Переименован файл: {old_path} -> {new_path}")
 
-
 def get_repo_path(repo_url):
     return repo_url.replace("https://github.com/", "")
-
 
 def clean_unused_repos():
     current_dir = os.getcwd()
@@ -100,15 +94,16 @@ def clean_unused_repos():
     }
     print(f"Все директории до фильтрации: {existing_dirs}")
 
-    if ".git" in existing_dirs:
-        existing_dirs.remove(".git")
+    protected_dirs = {".git", ".github", "assets"}
+    existing_dirs.difference_update(protected_dirs)
+    print(f"Директории после исключения защищённых: {existing_dirs}")
 
     expected_dirs = {get_repo_path(url).split("/")[0] for url in repos}
     print(f"Ожидаемые директории: {expected_dirs}")
 
     for dir_name in existing_dirs:
         dir_path = os.path.join(current_dir, dir_name)
-        if dir_name not in expected_dirs and dir_name != ".git":  # Двойная проверка
+        if dir_name not in expected_dirs:
             shutil.rmtree(dir_path, ignore_errors=True)
             print(f"Удалена директория, отсутствующая в списке repos: {dir_path}")
 
@@ -118,15 +113,12 @@ def clean_unused_repos():
         if os.path.exists(local_path):
             if not is_repo_accessible(repo_url):
                 shutil.rmtree(local_path, ignore_errors=True)
-                print(
-                    f"Удалена директория недоступного или удалённого репозитория: {local_path}"
-                )
-
+                print(f"Удалена директория недоступного или удалённого репозитория: {local_path}")
 
 def clone_or_update_repo(repo_url):
-    repo_path = repo_url.replace("https://github.com/", "")
+    repo_path = get_repo_path(repo_url)
     owner, repo_name = repo_path.split("/")
-    local_path = f"{owner}/{repo_name}"
+    local_path = os.path.join(owner, repo_name)
 
     if not os.path.exists(owner):
         os.makedirs(owner)
@@ -141,17 +133,16 @@ def clone_or_update_repo(repo_url):
 
     try:
         subprocess.run(
-            ["git", "clone", repo_url, local_path],
+            ["git", "clone", "--depth", "1", repo_url, local_path],
             check=True,
             capture_output=True,
             text=True,
         )
-        shutil.rmtree(os.path.join(local_path, ".git"))
+        shutil.rmtree(os.path.join(local_path, ".git"), ignore_errors=True)
         rename_invalid_files(local_path)
         print(f"Клонирован и обработан репозиторий: {repo_url} -> {local_path}")
     except subprocess.CalledProcessError as e:
-        print(f"Ошибка при клонировании {repo_url}: {e.output}, пропускаем.")
-
+        print(f"Ошибка при клонировании {repo_url}: {e.stderr}, пропускаем.")
 
 if __name__ == "__main__":
     clean_unused_repos()
