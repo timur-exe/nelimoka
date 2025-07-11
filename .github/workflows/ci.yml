@@ -72,6 +72,10 @@ jobs:
           python-version: '3.9'
       - name: Install Python dependencies
         run: pip install requests
+      - name: Configure Git for github-actions[bot]
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
       - name: Clone and update repositories
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -173,7 +177,7 @@ jobs:
             git log origin/${{ env.BRANCH_NAME }} -1 || echo "Failed to view log for ${{ env.BRANCH_NAME }}"
             git diff origin/main origin/${{ env.BRANCH_NAME }} || echo "No diff between main and ${{ env.BRANCH_NAME }}"
             echo "Creating Pull Request..."
-            gh pr create --base main --head ${{ env.BRANCH_NAME }} --title "Update of repositories $(date +'%Y-%m-%d %H:%M:%S')" --body "Automated PR for repository updates" || echo "False to create PR"
+            gh pr create --base main --head ${{ env.BRANCH_NAME }} --title "Update of repositories $(date +'%Y-%m-%d %H:%M:%S')" --body "Automated PR for repository updates" || echo "Failed to create PR"
           else
             echo "Branch ${{ env.BRANCH_NAME }} does not exist in remote repository, skipping PR creation."
           fi
