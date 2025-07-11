@@ -24,6 +24,11 @@ jobs:
     # Run on schedule or manual dispatch
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
+      - name: Configure Git for github-actions[bot]
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global --list
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -34,10 +39,6 @@ jobs:
           python-version: '3.9'
       - name: Install Python dependencies
         run: pip install requests
-      - name: Configure Git for github-actions[bot]
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
       - name: Sync main branch and create new branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -61,6 +62,11 @@ jobs:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: before
     steps:
+      - name: Configure Git for github-actions[bot]
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global --list
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -72,10 +78,6 @@ jobs:
           python-version: '3.9'
       - name: Install Python dependencies
         run: pip install requests
-      - name: Configure Git for github-actions[bot]
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
       - name: Clone and update repositories
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -98,6 +100,11 @@ jobs:
       (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true)
     needs: update
     steps:
+      - name: Configure Git for github-actions[bot]
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global --list
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -107,10 +114,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-      - name: Configure Git for github-actions[bot]
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
       - name: Run parse scripts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -136,15 +139,16 @@ jobs:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: parse
     steps:
+      - name: Configure Git for github-actions[bot]
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global --list
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
           ref: ${{ env.BRANCH_NAME }}
-      - name: Configure Git for github-actions[bot]
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
       - name: Final commit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -161,6 +165,11 @@ jobs:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: commit
     steps:
+      - name: Configure Git for github-actions[bot]
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global --list
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -188,6 +197,11 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     needs: parse
     steps:
+      - name: Configure Git for github-actions[bot]
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global --list
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
