@@ -92,7 +92,6 @@ jobs:
 
   parse:
     runs-on: ubuntu-latest
-    # Run on schedule, manual dispatch, push to main, or merged PR
     if: |
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
@@ -100,6 +99,11 @@ jobs:
       (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true)
     needs: update
     steps:
+      - name: Debug event and branch
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Branch name: ${{ env.BRANCH_NAME }}"
+          echo "Ref to checkout: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && env.BRANCH_NAME || 'main' }}"
       - name: Configure Git for github-actions[bot]
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -110,6 +114,11 @@ jobs:
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
           ref: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' && env.BRANCH_NAME || 'main' }}
+      - name: Debug Git state
+        run: |
+          echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
+          git branch --list
+          git tag --list
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
