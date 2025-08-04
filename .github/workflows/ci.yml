@@ -21,7 +21,6 @@ env:
 jobs:
   before:
     runs-on: ubuntu-latest
-    # Run on schedule or manual dispatch
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Configure Git for github-actions[bot]
@@ -58,7 +57,6 @@ jobs:
 
   update:
     runs-on: ubuntu-latest
-    # Run on schedule or manual dispatch
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: before
     steps:
@@ -67,6 +65,8 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git config --global --list
+      - name: Configure Git to ignore file mode changes
+        run: git config core.fileMode false
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -78,6 +78,10 @@ jobs:
           python-version: '3.9'
       - name: Install Python dependencies
         run: pip install requests
+      - name: Debug file changes
+        run: |
+          git status
+          git diff --stat
       - name: Clone and update repositories
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -92,7 +96,6 @@ jobs:
 
   parse:
     runs-on: ubuntu-latest
-    # Run on schedule, manual dispatch, push to main, or merged PR
     if: |
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
@@ -105,11 +108,13 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git config --global --list
+      - name: Configure Git to ignore file mode changes
+        run: git config core.fileMode false
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
-          ref: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' && env.BRANCH_NAME || 'main' }}
+          ref: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && env.BRANCH_NAME || 'main' }}
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
@@ -120,8 +125,8 @@ jobs:
         run: |
           echo "Running parse after update..."
           git fetch origin
-          git checkout ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' && env.BRANCH_NAME || 'main' }}
-          git reset --hard origin/${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' && env.BRANCH_NAME || 'main' }}
+          git checkout ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && env.BRANCH_NAME || 'main' }}
+          git reset --hard origin/${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && env.BRANCH_NAME || 'main' }}
           python3 -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
@@ -131,11 +136,10 @@ jobs:
           git add modules.json
           git commit -m "Updated modules.json after parse $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for modules.json"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@${REPO_URL}"
-          git push origin ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' && env.BRANCH_NAME || 'main' }}
+          git push origin ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && env.BRANCH_NAME || 'main' }}
 
   commit:
     runs-on: ubuntu-latest
-    # Run on schedule or manual dispatch
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: parse
     steps:
@@ -144,11 +148,17 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git config --global --list
+      - name: Configure Git to ignore file mode changes
+        run: git config core.fileMode false
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
           ref: ${{ env.BRANCH_NAME }}
+      - name: Debug file changes
+        run: |
+          git status
+          git diff --stat
       - name: Final commit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -161,7 +171,6 @@ jobs:
 
   create_pr:
     runs-on: ubuntu-latest
-    # Run on schedule or manual dispatch
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: commit
     steps:
@@ -180,7 +189,6 @@ jobs:
         run: |
           echo "Checking branch status before PR..."
           git fetch origin
-          # Check if the branch exists in the remote repository
           if git ls-remote --exit-code --heads origin ${{ env.BRANCH_NAME }} >/dev/null 2>&1; then
             echo "Branch ${{ env.BRANCH_NAME }} exists in remote repository."
             git log origin/${{ env.BRANCH_NAME }} -1 || echo "Failed to view log for ${{ env.BRANCH_NAME }}"
@@ -193,7 +201,6 @@ jobs:
 
   backup:
     runs-on: ubuntu-latest
-    # Run on main branch or manual dispatch
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     needs: parse
     steps:
