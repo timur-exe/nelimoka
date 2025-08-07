@@ -23,15 +23,15 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
       - name: Configure Git for github-actions[bot]
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git config --global --list
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: ${{ env.GIT_DEPTH }}
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
@@ -60,6 +60,11 @@ jobs:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: before
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
+          ref: ${{ env.BRANCH_NAME }}
       - name: Configure Git for github-actions[bot]
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -67,11 +72,6 @@ jobs:
           git config --global --list
       - name: Configure Git to ignore file mode changes
         run: git config core.fileMode false
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: ${{ env.GIT_DEPTH }}
-          ref: ${{ env.BRANCH_NAME }}
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
@@ -86,7 +86,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git checkout ${{ env.BRANCH_NAME }}
           echo "Cloning and updating repositories..."
           python3 clone_repos.py || echo "Error running clone_repos.py, continuing with commit and push"
           git add .
@@ -103,11 +102,19 @@ jobs:
       (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true)
     needs: update
     steps:
-      - name: Debug event and branch
+      - name: Set branch ref for parse
+        id: setref
         run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Branch name: ${{ env.BRANCH_NAME }}"
-          echo "Ref to checkout: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && env.BRANCH_NAME || 'main' }}"
+          if [[ "${{ github.event_name }}" == "schedule" || "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "ref=${{ env.BRANCH_NAME }}" >> $GITHUB_OUTPUT
+          else
+            echo "ref=main" >> $GITHUB_OUTPUT
+          fi
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
+          ref: ${{ steps.setref.outputs.ref }}
       - name: Configure Git for github-actions[bot]
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -115,11 +122,6 @@ jobs:
           git config --global --list
       - name: Configure Git to ignore file mode changes
         run: git config core.fileMode false
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: ${{ env.GIT_DEPTH }}
-          ref: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && env.BRANCH_NAME || 'main' }}
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
@@ -130,8 +132,8 @@ jobs:
         run: |
           echo "Running parse after update..."
           git fetch origin
-          git checkout ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && env.BRANCH_NAME || 'main' }}
-          git reset --hard origin/${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && env.BRANCH_NAME || 'main' }}
+          git checkout ${{ steps.setref.outputs.ref }}
+          git reset --hard origin/${{ steps.setref.outputs.ref }}
           python3 -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
@@ -141,13 +143,18 @@ jobs:
           git add modules.json
           git commit -m "Updated modules.json after parse $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes for modules.json"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@${REPO_URL}"
-          git push origin ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && env.BRANCH_NAME || 'main' }}
+          git push origin ${{ steps.setref.outputs.ref }}
 
   commit:
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: parse
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
+          ref: ${{ env.BRANCH_NAME }}
       - name: Configure Git for github-actions[bot]
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -155,11 +162,6 @@ jobs:
           git config --global --list
       - name: Configure Git to ignore file mode changes
         run: git config core.fileMode false
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: ${{ env.GIT_DEPTH }}
-          ref: ${{ env.BRANCH_NAME }}
       - name: Debug file changes
         run: |
           git status
@@ -179,15 +181,15 @@ jobs:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: commit
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
       - name: Configure Git for github-actions[bot]
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git config --global --list
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: ${{ env.GIT_DEPTH }}
       - name: Create Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
