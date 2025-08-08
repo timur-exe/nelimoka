@@ -28684,6 +28684,510 @@
       "Chat"
     ]
   },
+  "mead0wsss/mead0wsMods/SteamProfile.py": {
+    "name": "SteamProfile",
+    "description": "Модуль для получения информации о пользователях Steam.",
+    "meta": {
+      "pic": null,
+      "banner": "https://x0.at/B0ze.png",
+      "developer": "@mead0wssMods"
+    },
+    "commands": [
+      {
+        "steamprofilecmd": "Получить информацию об пользователе Steam."
+      }
+    ],
+    "new_commands": [
+      {
+        "steamprofile": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Получить информацию об пользователе Steam."
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Chat"
+    ]
+  },
+  "mead0wsss/mead0wsMods/InfoPresets.py": {
+    "name": "InfoPresets",
+    "description": "Управление пресетами для HerokuInfo",
+    "meta": {
+      "pic": null,
+      "banner": "https://x0.at/GHOP.png",
+      "developer": "@mead0wssMods"
+    },
+    "commands": [
+      {
+        "createprcmd": "Создать новый пресет."
+      },
+      {
+        "delprcmd": "Удалить пресет."
+      },
+      {
+        "delfileprcmd": "Удалить файл с пресетами."
+      },
+      {
+        "uploadprcmd": "Загрузить файл с пресетами."
+      },
+      {
+        "listprcmd": "Показать список всех пресетов."
+      },
+      {
+        "loadprcmd": "Загрузить пресет."
+      }
+    ],
+    "new_commands": [
+      {
+        "createpr": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Создать новый пресет."
+        }
+      },
+      {
+        "delpr": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Удалить пресет."
+        }
+      },
+      {
+        "delfilepr": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Удалить файл с пресетами."
+        }
+      },
+      {
+        "uploadpr": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Загрузить файл с пресетами."
+        }
+      },
+      {
+        "listpr": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Показать список всех пресетов."
+        }
+      },
+      {
+        "loadpr": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Загрузить пресет."
+        }
+      }
+    ],
+    "category": [
+      "Chat",
+      "Tools"
+    ]
+  },
+  "mead0wsss/mead0wsMods/Twitch.py": {
+    "name": "TwitchMod",
+    "description": "Модуль для работы с Twitch",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@mead0wssMods"
+    },
+    "commands": [
+      {
+        "followed": "Показать всех подписанных стримеров"
+      },
+      {
+        "streams": "Показать онлайн стримы"
+      },
+      {
+        "streamer": "Информация о стримере"
+      },
+      {
+        "topgames": "Топ игр на Twitch"
+      },
+      {
+        "game": "Поиск игры и стримы по ней"
+      }
+    ],
+    "new_commands": [
+      {
+        "followed": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Показать всех подписанных стримеров"
+        }
+      },
+      {
+        "streams": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Показать онлайн стримы"
+        }
+      },
+      {
+        "streamer": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Информация о стримере"
+        }
+      },
+      {
+        "topgames": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Топ игр на Twitch"
+        }
+      },
+      {
+        "game": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Поиск игры и стримы по ней"
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Chat"
+    ]
+  },
+  "mead0wsss/mead0wsMods/AutomaticTranslator.py": {
+    "name": "AutomaticTranslator",
+    "description": "Модуль для автоматического перевода сообщений на язык. Создан ради забавы.",
+    "meta": {
+      "pic": null,
+      "banner": "https://x0.at/GgLO.png",
+      "developer": "@mead0wssMods"
+    },
+    "commands": [
+      {
+        "oncmd": "Включить автоматический перевод."
+      },
+      {
+        "offcmd": "Выключить автоматический перевод."
+      }
+    ],
+    "new_commands": [
+      {
+        "on": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Включить автоматический перевод."
+        }
+      },
+      {
+        "off": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Выключить автоматический перевод."
+        }
+      }
+    ],
+    "category": [
+      "Chat",
+      "Tools"
+    ]
+  },
+  "mead0wsss/mead0wsMods/DDNetPlayerTime.py": {
+    "name": "DDNetPlayerTime",
+    "description": "Получение статистики отыгранного времени игрока DDNet с ddstats.tw",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@mead0wssMods"
+    },
+    "commands": [
+      {
+        "ddpt": "<ник> | Получить статистику игрока"
+      }
+    ],
+    "new_commands": [
+      {
+        "ddpt": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "<ник> | Получить статистику игрока"
+        }
+      }
+    ],
+    "category": [
+      "Fun",
+      "Tools"
+    ]
+  },
+  "mead0wsss/mead0wsMods/tmpfiles.py": {
+    "name": "tmpfilesMod",
+    "description": "Модуль для загрузки файлов на tmpfiles.org",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@mead0wssMods"
+    },
+    "commands": [
+      {
+        "tmpfilescmd": "Загрузка ваших файлов на tmpfiles.org Uploading your files to tmpfiles.org"
+      }
+    ],
+    "new_commands": [
+      {
+        "tmpfiles": {
+          "ru_doc": "Загрузка ваших файлов на tmpfiles.org",
+          "en_doc": "Uploading your files to tmpfiles.org",
+          "doc": null
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Security"
+    ]
+  },
+  "mead0wsss/mead0wsMods/DDNetStats.py": {
+    "name": "DDNetStats",
+    "description": "Модуль для просмотра статистики игрока DDNet через ddstats.tw",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@mead0wssMods"
+    },
+    "commands": [
+      {
+        "ddstats": "<ник> — Показать статистику игрока DDNet"
+      },
+      {
+        "ddstatsred": "<ник> - Упрощенная версия"
+      }
+    ],
+    "new_commands": [
+      {
+        "ddstats": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "<ник> — Показать статистику игрока DDNet"
+        }
+      },
+      {
+        "ddstatsred": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "<ник> - Упрощенная версия"
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Fun"
+    ]
+  },
+  "mead0wsss/mead0wsMods/SenderGifts.py": {
+    "name": "SenderGifts",
+    "description": "Модуль для отправки подарков",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@mead0wssMods x @nullmod"
+    },
+    "commands": [
+      {
+        "sendgift": "Отправить подарок пользователю"
+      }
+    ],
+    "new_commands": [
+      {
+        "sendgift": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Отправить подарок пользователю"
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Chat"
+    ]
+  },
+  "mead0wsss/mead0wsMods/RussianRoulette.py": {
+    "name": "RouletteMod",
+    "description": "Модуль для игры в Русскую рулетку. При поражении выкидывает с чата.",
+    "meta": {
+      "pic": null,
+      "banner": "https://x0.at/N3nB.jpg",
+      "developer": "@mead0wssMods"
+    },
+    "commands": [
+      {
+        "roulettecmd": "Начать игру в Русскую рулетку"
+      }
+    ],
+    "new_commands": [
+      {
+        "roulette": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Начать игру в Русскую рулетку"
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Chat"
+    ]
+  },
+  "mead0wsss/mead0wsMods/MyFACEIT.py": {
+    "name": "MyFACEIT",
+    "description": "Модуль для получения информации о своем профиле FACEIT",
+    "meta": {
+      "pic": null,
+      "banner": "https://x0.at/Hu25.jpg",
+      "developer": "@mead0wssMods"
+    },
+    "commands": [
+      {
+        "myfaceitcmd": "- Показать информацию об своем FACEIT профиле."
+      }
+    ],
+    "new_commands": [
+      {
+        "myfaceit": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "- Показать информацию об своем FACEIT профиле."
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Fun"
+    ]
+  },
+  "mead0wsss/mead0wsMods/FaceitStatus.py": {
+    "name": "FaceitStatus",
+    "description": "Модуль для установки статуса в зависимости от уровня FACEIT CS 2",
+    "meta": {
+      "pic": null,
+      "banner": "https://x0.at/tYLF.png",
+      "developer": "@mead0wssMods"
+    },
+    "commands": [
+      {
+        "on_faccmd": "Включить обновление статуса."
+      },
+      {
+        "off_faccmd": "Выключить обновление статуса."
+      }
+    ],
+    "new_commands": [
+      {
+        "on_fac": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Включить обновление статуса."
+        }
+      },
+      {
+        "off_fac": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Выключить обновление статуса."
+        }
+      }
+    ],
+    "category": [
+      "Chat",
+      "Tools"
+    ]
+  },
+  "mead0wsss/mead0wsMods/AutoFormatting.py": {
+    "name": "AutoFormatting",
+    "description": "Модуль для автоматического форматирования вашего текста в чате.",
+    "meta": {
+      "pic": null,
+      "banner": "https://x0.at/yCcx.jpg",
+      "developer": "@mead0wssMods"
+    },
+    "commands": [
+      {
+        "bold": "Включает или отключает жирный текст."
+      },
+      {
+        "italic": "Включает или отключает курсив."
+      },
+      {
+        "mono": "Включает или отключает моноширинный текст."
+      },
+      {
+        "underline": "Включает или отключает подчеркивание."
+      },
+      {
+        "strikethrough": "Включает или отключает зачеркивание."
+      },
+      {
+        "off": "Отключает все стили."
+      },
+      {
+        "on": "Включает стиль по умолчанию (жирный текст)."
+      }
+    ],
+    "new_commands": [
+      {
+        "bold": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Включает или отключает жирный текст."
+        }
+      },
+      {
+        "italic": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Включает или отключает курсив."
+        }
+      },
+      {
+        "mono": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Включает или отключает моноширинный текст."
+        }
+      },
+      {
+        "underline": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Включает или отключает подчеркивание."
+        }
+      },
+      {
+        "strikethrough": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Включает или отключает зачеркивание."
+        }
+      },
+      {
+        "off": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Отключает все стили."
+        }
+      },
+      {
+        "on": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Включает стиль по умолчанию (жирный текст)."
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Chat"
+    ]
+  },
   "SkillsAngels/Modules/smile.py": {
     "name": "Smile",
     "description": null,
@@ -30745,6 +31249,33 @@
     "category": [
       "Tools",
       "Chat"
+    ]
+  },
+  "unneyon/hikka-mods/sdsaver.py": {
+    "name": "SDSaverMod",
+    "description": "The module for automatically saving self-destructing media",
+    "meta": {
+      "pic": "https://raw.githubusercontent.com/kamekuro/hikka-mods/main/icons/sdsaver.png",
+      "banner": "https://raw.githubusercontent.com/kamekuro/hikka-mods/main/banners/sdsaver.png",
+      "developer": "@kamekuro_hmods"
+    },
+    "commands": [
+      {
+        "sdmodecmd": "👉 Enable/Disable automatic saving self-destructing media 👉 Включить/Выключить автоматическое сохранение самоуничтожающихся медиа"
+      }
+    ],
+    "new_commands": [
+      {
+        "sdmode": {
+          "ru_doc": "👉 Включить/Выключить автоматическое сохранение самоуничтожающихся медиа",
+          "en_doc": null,
+          "doc": "👉 Enable/Disable automatic saving self-destructing media"
+        }
+      }
+    ],
+    "category": [
+      "Chat",
+      "Tools"
     ]
   },
   "unneyon/hikka-mods/privacy.py": {
@@ -35322,6 +35853,289 @@
     "category": [
       "Tools",
       "Chat"
+    ]
+  },
+  "cryptexctl/modules-mirror/сланцы2.py": {
+    "name": "SlantsyMod",
+    "description": "АХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@systemxplore"
+    },
+    "commands": [
+      {
+        "этосланцычат": "АХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ"
+      }
+    ],
+    "new_commands": [
+      {
+        "этосланцычат": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "АХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ\nАХХХ ЭТО ГОРЯЩИЕ СЛАНЦЫ ЧААТ"
+        }
+      }
+    ],
+    "category": [
+      "Fun",
+      "Tools"
+    ]
+  },
+  "cryptexctl/modules-mirror/actually.py": {
+    "name": "ActuallyMod",
+    "description": "ehm, actually🤓️.",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@systemxplore"
+    },
+    "commands": [
+      {
+        "actually": "ehm, actually'"
+      }
+    ],
+    "new_commands": [
+      {
+        "actually": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "ehm, actually'"
+        }
+      }
+    ],
+    "category": [
+      "Fun",
+      "Tools"
+    ]
+  },
+  "cryptexctl/modules-mirror/овощерезка.py": {
+    "name": "RandomPostMod",
+    "description": "Отправляет случайный пост из p2 или pixelgang с картинками.",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@systemxplore"
+    },
+    "commands": [
+      {
+        "овощерезка": "Отправляет случайный мемасек из p2 или pixelgang "
+      }
+    ],
+    "new_commands": [
+      {
+        "овощерезка": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Отправляет случайный мемасек из p2 или pixelgang "
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Chat"
+    ]
+  },
+  "cryptexctl/modules-mirror/avaclone.py": {
+    "name": "AvaCloneMod",
+    "description": "Устанавливает фото/видео/гиф аватарку многократно.\nОсторожно: возможен бан или флудвейт.",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@systemxplore"
+    },
+    "commands": [
+      {
+        "avaclone": "Устанавливает аватарку указанное количество раз.\nИспользуйте: .avaclone <количество> [ответ на файл/ссылка]"
+      }
+    ],
+    "new_commands": [
+      {
+        "avaclone": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Устанавливает аватарку указанное количество раз.\nИспользуйте: .avaclone <количество> [ответ на файл/ссылка]"
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Chat"
+    ]
+  },
+  "cryptexctl/modules-mirror/komarumod.py": {
+    "name": "KomaruMod",
+    "description": "Достает рандомную гифку из @komarugif\nканал заменил @systemxplore, оригинальный разработчик: @wmodules",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@wmodules"
+    },
+    "commands": [
+      {
+        "komarugifcmd": "Рандомная гифка"
+      }
+    ],
+    "new_commands": [
+      {
+        "komarugif": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Рандомная гифка"
+        }
+      }
+    ],
+    "category": [
+      "Fun",
+      "Chat"
+    ]
+  },
+  "cryptexctl/modules-mirror/SomethingCreatingScriptErrors.py": {
+    "name": "ScriptErrorMod",
+    "description": null,
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@systemxplore"
+    },
+    "commands": [
+      {
+        "скриптовыеошибки": ""
+      }
+    ],
+    "new_commands": [
+      {
+        "скриптовыеошибки": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": null
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Fun"
+    ]
+  },
+  "cryptexctl/modules-mirror/randomtrack.py": {
+    "name": "RandomTrackMod",
+    "description": "Отправляет случайный трек из указанного канала.",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@systemxplore"
+    },
+    "commands": [
+      {
+        "randomtrack": "Отправляет случайный трек из вашего канала."
+      }
+    ],
+    "new_commands": [
+      {
+        "randomtrack": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Отправляет случайный трек из вашего канала."
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Chat"
+    ]
+  },
+  "cryptexctl/modules-mirror/zovmodule.py": {
+    "name": "LeeterMod",
+    "description": "Тут либо гойда либо зов\nлибо ZOVишь либо leetируешь",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@systemxplore"
+    },
+    "commands": [
+      {
+        "leeter": "Включить/выключить обработку сообщений."
+      },
+      {
+        "zovmode": "Переключить режим: leet или zov."
+      }
+    ],
+    "new_commands": [
+      {
+        "leeter": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Включить/выключить обработку сообщений."
+        }
+      },
+      {
+        "zovmode": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Переключить режим: leet или zov."
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Chat"
+    ]
+  },
+  "cryptexctl/modules-mirror/notesmod.py": {
+    "name": "NotesFileMod",
+    "description": "Модуль для заметок с хранением в файлах",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@systemxplore"
+    },
+    "commands": [
+      {
+        "noteadd": "Добавить заметку.\nИспользование: .noteadd #tag <текст>"
+      },
+      {
+        "notedelete": "Удалить заметку.\nИспользование: .notedelete #tag"
+      },
+      {
+        "noteview": "Просмотреть заметку.\nИспользование: .noteview #tag"
+      },
+      {
+        "notelist": "Показать список всех заметок."
+      }
+    ],
+    "new_commands": [
+      {
+        "noteadd": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Добавить заметку.\nИспользование: .noteadd #tag <текст>"
+        }
+      },
+      {
+        "notedelete": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Удалить заметку.\nИспользование: .notedelete #tag"
+        }
+      },
+      {
+        "noteview": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Просмотреть заметку.\nИспользование: .noteview #tag"
+        }
+      },
+      {
+        "notelist": {
+          "ru_doc": null,
+          "en_doc": null,
+          "doc": "Показать список всех заметок."
+        }
+      }
+    ],
+    "category": [
+      "Chat",
+      "Tools"
     ]
   },
   "fiksofficial/python-modules/speedtest.py": {
