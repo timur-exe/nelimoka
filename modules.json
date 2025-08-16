@@ -22435,6 +22435,33 @@
       "Chat"
     ]
   },
+  "fiksofficial/python-modules/multiunloadmodule.py": {
+    "name": "MultiUnloadModule",
+    "description": "Unloads several modules at once with one command",
+    "meta": {
+      "pic": null,
+      "banner": null,
+      "developer": "@pymodule"
+    },
+    "commands": [
+      {
+        "mulm": "{modules separated by commas} - unload multiple modules {модули через запятую} — выгрузить несколько модулей"
+      }
+    ],
+    "new_commands": [
+      {
+        "mulm": {
+          "ru_doc": "{модули через запятую} — выгрузить несколько модулей",
+          "en_doc": null,
+          "doc": "{modules separated by commas} - unload multiple modules"
+        }
+      }
+    ],
+    "category": [
+      "Tools",
+      "Chat"
+    ]
+  },
   "fiksofficial/python-modules/ai.py": {
     "name": "AIModule",
     "description": "Module for interacting with AI",
@@ -29111,43 +29138,6 @@
     "category": [
       "Tools",
       "Chat"
-    ]
-  },
-  "mead0wsss/mead0wsMods/AutomaticTranslator.py": {
-    "name": "AutomaticTranslator",
-    "description": "Модуль для автоматического перевода сообщений на язык. Создан ради забавы.",
-    "meta": {
-      "pic": null,
-      "banner": "https://x0.at/GgLO.png",
-      "developer": "@mead0wssMods"
-    },
-    "commands": [
-      {
-        "oncmd": "Включить автоматический перевод."
-      },
-      {
-        "offcmd": "Выключить автоматический перевод."
-      }
-    ],
-    "new_commands": [
-      {
-        "on": {
-          "ru_doc": null,
-          "en_doc": null,
-          "doc": "Включить автоматический перевод."
-        }
-      },
-      {
-        "off": {
-          "ru_doc": null,
-          "en_doc": null,
-          "doc": "Выключить автоматический перевод."
-        }
-      }
-    ],
-    "category": [
-      "Chat",
-      "Tools"
     ]
   },
   "mead0wsss/mead0wsMods/DDNetStats.py": {
