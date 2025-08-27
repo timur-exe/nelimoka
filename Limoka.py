@@ -1,8 +1,6 @@
 # meta developer: @limokanews
 # requires: whoosh
 
-# Thanks to fiksofficial(GitHub) for the full translation of "Limoka" into English and Russian.
-
 from whoosh.index import create_in, open_dir
 from whoosh.fields import Schema, TEXT, ID
 from whoosh.qparser import QueryParser, OrGroup
@@ -29,7 +27,7 @@ from ..types import InlineQuery, InlineCall
 
 logger = logging.getLogger("Limoka")
 
-__version__ = (1, 1, 0)
+__version__ = (1, 1, 1)
 
 
 class Search:
