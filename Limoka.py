@@ -1,6 +1,8 @@
 # meta developer: @limokanews
 # requires: whoosh
 
+# Thanks to fiksofficial(GitHub) for the full translation of "Limoka" into English and Russian.
+
 from whoosh.index import create_in, open_dir
 from whoosh.fields import Schema, TEXT, ID
 from whoosh.qparser import QueryParser, OrGroup
@@ -20,8 +22,8 @@ from telethon.errors.rpcerrorlist import WebpageMediaEmptyError
 try:
     from aiogram.utils.exceptions import BadRequest
 except ImportError:
-    from aiogram.exceptions import TelegramBadRequest as BadRequest # essential crutch for aiogram 3 in heroku 1.7.0 
-    
+    from aiogram.exceptions import TelegramBadRequest as BadRequest  # essential crutch for aiogram 3 in heroku 1.7.0 
+
 from .. import utils, loader
 from ..types import InlineQuery, InlineCall
 
@@ -67,6 +69,7 @@ class Limoka(loader.Module):
 
     strings = {
         "name": "Limoka",
+        "_cls_doc": "Hikka modules are now in one place with easy searching!",
         "wait": (
             "Just wait\n"
             "<emoji document_id=5404630946563515782>🔍</emoji> A search is underway among {count} modules "
@@ -88,6 +91,16 @@ class Limoka(loader.Module):
             "{commands}\n"
             "<emoji document_id=5411143117711624172>🪄</emoji> <code>{prefix}dlm {url}{module_path}</code>\n\n"
             "<i>Updates daily at midnight!</i>"
+        ),
+        "found_header": (
+            "<emoji document_id=5413334818047940135>🔍</emoji> Found the module <b>{name}</b> "
+            "by query: <b>{query}</b>\n\n"
+        ),
+        "description_line": (
+            "<b><emoji document_id=5418376169055602355>ℹ️</emoji> Description:</b> {description}\n"
+        ),
+        "developer_line": (
+            "<b><emoji document_id=5418299289141004396>🧑‍💻</emoji> Developer:</b> {username}\n\n"
         ),
         "command_template": "{emoji} <code>{prefix}{command}</code> {description}\n",
         "emojis": {
@@ -122,33 +135,57 @@ class Limoka(loader.Module):
         "clear_filters": "🗑 Clear Filters",
         "back_to_results": "🔙 Back to Results",
         "empty_history": "<emoji document_id=5879939498149679716>🔎</emoji> <b>Your search history is empty!</b>",
+        "no_categories": "No categories found in the module database!",
+        "last_page": "This is the last page!",
+        "first_page": "This is the first page!",
+        "dotd_error": "Error loading module of the day!",
+        "select_categories": "Select categories for query: <code>{query}</code>\n(You can select multiple)",
+        "no_query": "No query",
+        "something_wrong": "Something went wrong...",
+        "no_results": "No results",
+        "prev_page": "⏪ Previous",
+        "next_page": "⏩ Next",
+        "disabled_nav": "🚫 Disabled",
+        "back_button": "🔙 Back",
+        "pagination": "{page} of {total}",
+        "filters_text": "Categories: {categories}",
+        "no_filters": "None",
+        "ellipsis": "…",
+        "filters_button": "🔍 Filters",
+        "selected_category_prefix": "✅ ",
     }
 
     strings_ru = {
+        "_cls_doc": "Модули Hikka теперь собраны в одном месте с удобным поиском!",
         "wait": (
-            "Подождите"
-            "\n<emoji document_id=5404630946563515782>🔍</emoji> Идёт поиск среди {count} модулей по запросу: <code>{query}</code>"
-            "\n"
-            "\n<i>{fact}</i>"
+            "Подождите\n"
+            "<emoji document_id=5404630946563515782>🔍</emoji> Идёт поиск среди {count} модулей по запросу: <code>{query}</code>\n\n"
+            "<i>{fact}</i>"
         ),
         "found": (
-            "<emoji document_id=5413334818047940135>🔍</emoji> Найден модуль <b>{name}</b> по запросу: <b>{query}</b>"
-            "\n"
-            "\n<b><emoji document_id=5418376169055602355>ℹ️</emoji> Описание:</b> {description}"
-            "\n<b><emoji document_id=5418299289141004396>🧑‍💻</emoji> Разработчик:</b> {username}"
-            "\n"
-            "\n{commands}"
-            "\n"
-            "\n<emoji document_id=5411143117711624172>🪄</emoji> <code>{prefix}dlm {url}{module_path}</code>"
+            "<emoji document_id=5413334818047940135>🔍</emoji> Найден модуль <b>{name}</b> по запросу: <b>{query}</b>\n\n"
+            "<b><emoji document_id=5418376169055602355>ℹ️</emoji> Описание:</b> {description}\n"
+            "<b><emoji document_id=5418299289141004396>🧑‍💻</emoji> Разработчик:</b> {username}\n\n"
+            "{commands}\n"
+            "<emoji document_id=5411143117711624172>🪄</emoji> <code>{prefix}dlm {url}{module_path}</code>"
         ),
         "dotd": (
             "<emoji document_id=5436049557150655576>🌟</emoji> <b>Модуль дня</b>\n\n"
             "<emoji document_id=5413334818047940135>🔍</emoji> <b>{name}</b>\n"
             "<b><emoji document_id=5418376169055602355>ℹ️</emoji> Описание:</b> {description}\n"
-            "<b><emoji document_id=5418299289141004396>🧑‍💻</emoji> Developer:</b> {username}\n\n"
+            "<b><emoji document_id=5418299289141004396>🧑‍💻</emoji> Разработчик:</b> {username}\n\n"
             "{commands}\n"
             "<emoji document_id=5411143117711624172>🪄</emoji> <code>{prefix}dlm {url}{module_path}</code>\n\n"
             "<i>Обновляется ежедневно в полночь!</i>"
+        ),
+        "found_header": (
+            "<emoji document_id=5413334818047940135>🔍</emoji> Найден модуль <b>{name}</b> по запросу: <b>{query}</b>\n\n"
+        ),
+        "description_line": (
+            "<b><emoji document_id=5418376169055602355>ℹ️</emoji> Описание:</b> {description}\n"
+        ),
+        "developer_line": (
+            "<b><emoji document_id=5418299289141004396>🧑‍💻</emoji> Разработчик:</b> {username}\n\n"
         ),
         "command_template": "{emoji} <code>{prefix}{command}</code> {description}\n",
         "404": "<emoji document_id=5210952531676504517>❌</emoji> <b>Не найдено по запросу: <i>{query}</i></b>",
@@ -172,6 +209,24 @@ class Limoka(loader.Module):
         "clear_filters": "🗑 Очистить фильтры",
         "back_to_results": "🔙 Вернуться к результатам",
         "empty_history": "<emoji document_id=5879939498149679716>🔎</emoji> <b>Ваша история поиска пуста!</b>",
+        "no_categories": "Категории в базе данных модулей не найдены!",
+        "last_page": "Это последняя страница!",
+        "first_page": "Это первая страница!",
+        "dotd_error": "Ошибка загрузки модуля дня!",
+        "select_categories": "Выберите категории для запроса: <code>{query}</code>\n(Можно выбрать несколько)",
+        "no_query": "Нет запроса",
+        "something_wrong": "Что-то пошло не так...",
+        "no_results": "Нет результатов",
+        "prev_page": "⏪ Назад",
+        "next_page": "⏩ Вперед",
+        "disabled_nav": "🚫 Недоступно",
+        "back_button": "🔙 Назад",
+        "pagination": "{page} из {total}",
+        "filters_text": "Категории: {categories}",
+        "no_filters": "Нет",
+        "ellipsis": "…",
+        "filters_button": "🔍 Фильтры",
+        "selected_category_prefix": "✅ ",
     }
 
     def __init__(self):
@@ -275,7 +330,7 @@ class Limoka(loader.Module):
         commands = []
         for i, func in enumerate(module_info["commands"], 1):
             if i > 9:
-                commands.append("…")
+                commands.append(self.strings["ellipsis"])
                 break
             for command, description in func.items():
                 emoji = self.strings["emojis"].get(i, "")
@@ -304,7 +359,9 @@ class Limoka(loader.Module):
         ]
         
         categories = current_filters.get("category", [])
-        filters_text = f"Categories: {', '.join(categories) if categories else 'None'}"
+        filters_text = self.strings["filters_text"].format(
+            categories=', '.join(categories) if categories else self.strings["no_filters"]
+        )
         await call.edit(
             self.strings["filter_menu"].format(query=query) + f"\n{filters_text}",
             reply_markup=markup
@@ -317,20 +374,20 @@ class Limoka(loader.Module):
         categories = sorted(all_categories)
 
         if not categories:
-            await call.edit("No categories found in the module database!", reply_markup=[])
+            await call.edit(self.strings["no_categories"], reply_markup=[])
             return
 
         selected_categories = current_filters.get("category", [])
         markup = [
-            [{"text": f"{'✅ ' if cat in selected_categories else ''}{cat}", 
+            [{"text": f"{self.strings['selected_category_prefix'] if cat in selected_categories else ''}{cat}", 
               "callback": self._toggle_category, 
               "args": (query, current_filters, cat)}]
             for cat in categories
         ]
-        markup.append([{"text": "🔙 Back", "callback": self._display_filter_menu, "args": (query, current_filters)}])
+        markup.append([{"text": self.strings["back_button"], "callback": self._display_filter_menu, "args": (query, current_filters)}])
         
         await call.edit(
-            f"Select categories for query: <code>{query}</code>\n(You can select multiple)",
+            self.strings["select_categories"].format(query=query),
             reply_markup=markup
         )
 
@@ -366,7 +423,7 @@ class Limoka(loader.Module):
 
         if not result or result == 0:
             if from_filters:
-                markup = [[{"text": "🔙 Back", "callback": self._display_filter_menu, "args": (query, filters)}]]
+                markup = [[{"text": self.strings["back_button"], "callback": self._display_filter_menu, "args": (query, filters)}]]
                 await call.edit(self.strings["404"].format(query=query), reply_markup=markup)
             else:
                 await call.edit(self.strings["404"].format(query=query), reply_markup=[])
@@ -382,7 +439,7 @@ class Limoka(loader.Module):
 
         if not filtered_result:
             if from_filters:
-                markup = [[{"text": "🔙 Back", "callback": self._display_filter_menu, "args": (query, filters)}]]
+                markup = [[{"text": self.strings["back_button"], "callback": self._display_filter_menu, "args": (query, filters)}]]
                 await call.edit(self.strings["404"].format(query=query), reply_markup=markup)
             else:
                 await call.edit(self.strings["404"].format(query=query), reply_markup=[])
@@ -392,7 +449,7 @@ class Limoka(loader.Module):
         module_info = self.modules[module_path]
         await self._display_module(call, module_info, module_path, query, filtered_result, 0, filters)
 
-    @loader.command()
+    @loader.command(ru_doc="[запрос] - Поиск модуля с опциями фильтрации")
     async def limokacmd(self, message: Message):
         """[query] - Search module with filter options"""
         args = utils.get_args_raw(message)
@@ -428,7 +485,7 @@ class Limoka(loader.Module):
         module_info = self.modules[module_path]
         await self._display_module(message, module_info, module_path, args, result, 0, {})
 
-    @loader.command()
+    @loader.command(ru_doc=" - Показать последние 10 запросов")
     async def lshistorycmd(self, message: Message):
         """ - Showing the last 10 requests"""
         if not self._history:
@@ -443,13 +500,13 @@ class Limoka(loader.Module):
             )
         )
 
-    @loader.command()
+    @loader.command(ru_doc="- Показать модуль дня")
     async def limokadotd(self, message: Message):
         """- Show the Module of the Day"""
         await self._check_daily_module()
         
         if not self._daily_module:
-            await utils.answer(message, "Error loading module of the day!")
+            await utils.answer(message, self.strings["dotd_error"])
             return
 
         module_info = self._daily_module["info"]
@@ -506,7 +563,9 @@ class Limoka(loader.Module):
         )
 
         categories = filters.get("category", [])
-        filters_text = f"Categories: {', '.join(categories) if categories else 'None'}"
+        filters_text = self.strings["filters_text"].format(
+            categories=', '.join(categories) if categories else self.strings["no_filters"]
+        )
 
         full_message = formatted_message + f"\n{filters_text}"
         if len(full_message) > 1024:
@@ -515,35 +574,34 @@ class Limoka(loader.Module):
             if max_content_length < 100:
                 max_content_length = 100
             
-            description = (description[:max_content_length//2] + html.escape("...")) if len(description) > max_content_length//2 else description
+            description = (description[:max_content_length//2] + html.escape(self.strings["ellipsis"])) if len(description) > max_content_length//2 else description
             commands = commands[:3] if len(commands) > 3 else commands
             formatted_message = (
-                f"<emoji document_id=5413334818047940135>🔍</emoji> Found the module <b>{name}</b> "
-                f"by query: <b>{query}</b>\n\n"
-                f"<b><emoji document_id=5418376169055602355>ℹ️</emoji> Description:</b> {description}\n"
-                f"<b><emoji document_id=5418299289141004396>🧑‍💻</emoji> Developer:</b> {dev_username}\n\n"
-                f"{''.join(commands)}\n"
+                self.strings["found_header"].format(name=name, query=query) +
+                self.strings["description_line"].format(description=description) +
+                self.strings["developer_line"].format(username=dev_username) +
+                "".join(commands)
             ).strip()
-            full_message = f"{formatted_message[:max_content_length]}{'...' if len(formatted_message) > max_content_length else ''}\n\n{download_command}\n{filters_text}"
+            full_message = f"{formatted_message[:max_content_length]}{self.strings['ellipsis'] if len(formatted_message) > max_content_length else ''}\n\n{download_command}\n{filters_text}"
         else:
             full_message = formatted_message + f"\n{filters_text}"
 
         markup = [
             [
                 {
-                    "text": "⏪" if index > 0 else "🚫",
+                    "text": self.strings["prev_page"] if index > 0 else self.strings["disabled_nav"],
                     "callback": self._previous_page if index > 0 else self._inline_void,
                     "args": (result, index, query, filters) if index > 0 else (),
                 },
-                {"text": f"{page}/{len(result)}", "callback": self._inline_void},
+                {"text": self.strings["pagination"].format(page=page, total=len(result)), "callback": self._inline_void},
                 {
-                    "text": "⏩" if index + 1 < len(result) else "🚫",
+                    "text": self.strings["next_page"] if index + 1 < len(result) else self.strings["disabled_nav"],
                     "callback": self._next_page if index + 1 < len(result) else self._inline_void,
                     "args": (result, index, query, filters) if index + 1 < len(result) else (),
                 },
             ],
             [
-                {"text": "🔍 Filters", "callback": self._display_filter_menu, "args": (query, filters)},
+                {"text": self.strings["filters_button"], "callback": self._display_filter_menu, "args": (query, filters)},
             ]
         ]
 
@@ -578,7 +636,7 @@ class Limoka(loader.Module):
 
     async def _next_page(self, call: InlineCall, result: list, index: int, query: str, filters: dict):
         if index + 1 >= len(result):
-            await call.answer("This is the last page!")
+            await call.answer(self.strings["last_page"])
             return
 
         index += 1
@@ -588,7 +646,7 @@ class Limoka(loader.Module):
 
     async def _previous_page(self, call: InlineCall, result: list, index: int, query: str, filters: dict):
         if index - 1 < 0:
-            await call.answer("This is the first page!")
+            await call.answer(self.strings["first_page"])
             return
 
         index -= 1
@@ -604,7 +662,7 @@ class Limoka(loader.Module):
         """[query] - Inline search modules"""
         if not query.args:
             return {
-                "title": "No query",
+                "title": self.strings["no_query"],
                 "description": self.strings["inlinenoargs"],
                 "thumb": "https://img.icons8.com/?size=100&id=NIWYFnJlcBfr&format=png&color=000000",
                 "message": self.strings["inlinenoargs"],
@@ -615,7 +673,7 @@ class Limoka(loader.Module):
             results = searcher.search_module()
         except IndexError:
             return {
-                "title": "Something went wrong...",
+                "title": self.strings["something_wrong"],
                 "description": self.strings["inline?"],
                 "thumb": "https://img.icons8.com/?size=100&id=rUSWMuGVdxJj&format=png&color=000000",
                 "message": self.strings["inline?"],
@@ -623,7 +681,7 @@ class Limoka(loader.Module):
 
         if not results:
             return {
-                "title": "No results",
+                "title": self.strings["no_results"],
                 "description": self.strings["inline404"],
                 "thumb": "https://img.icons8.com/?size=100&id=olDsW0G3zz22&format=png&color=000000",
                 "message": self.strings["inline404"],
