@@ -35,7 +35,7 @@ class GigaChat(loader.Module):
 
         "answer": """<emoji document_id=5785419053354979106>❔</emoji> <b>Вопрос:</b> {question}
 
-<emoji document_id=5357555931745893459>🗿</emoji> <b>Ответ:</b> {answer}}""",
+<emoji document_id=5357555931745893459>🗿</emoji> <b>Ответ:</b> {answer}""",
     }
 
     async def client_ready(self, client, db):
