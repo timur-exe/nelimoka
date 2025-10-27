@@ -31,7 +31,7 @@ class GigaChat(loader.Module):
 
         "no_args": "<emoji document_id=5854929766146118183>❌</emoji> <b>Нужно </b><code>{}{} {}</code>",
 
-        "asking_gg": "<emoji document_id=5325787248363314644>🔄</emoji> <b>Спрашиваю нейросеть...</b>",
+        "asking_gg": "<emoji document_id=5325787248363314644>🔄</emoji> <b>Спрашиваю GigaChat...</b>",
 
         "answer": """<emoji document_id=5785419053354979106>❔</emoji> <b>Вопрос:</b> {question}
 
