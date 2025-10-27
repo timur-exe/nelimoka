@@ -31,11 +31,11 @@ class GigaChat(loader.Module):
 
         "no_args": "<emoji document_id=5854929766146118183>❌</emoji> <b>Нужно </b><code>{}{} {}</code>",
 
-        "asking_gg": "<emoji document_id=5325787248363314644>🔄</emoji> <b>Спрашиваю GigaChat...</b>",
+        "asking_gg": "<emoji document_id=5325787248363314644>🔄</emoji> <b>Спрашиваю нейросеть...</b>",
 
-        "answer": """<emoji document_id=5357555931745893459>🗿</emoji> <b>Ответ:</b> {answer}
+        "answer": """<emoji document_id=5785419053354979106>❔</emoji> <b>Вопрос:</b> {question}
 
-<emoji document_id=5785419053354979106>❔</emoji> <b>Вопрос:</b> {question}""",
+<emoji document_id=5357555931745893459>🗿</emoji> <b>Ответ:</b> {answer}}""",
     }
 
     async def client_ready(self, client, db):
@@ -66,11 +66,11 @@ class GigaChat(loader.Module):
                 await asyncio.sleep(5.67)
 
     @loader.command()
-    async def ggchat(self, message):
+    async def gg(self, message):
         """Задать вопрос к GigaChat"""
         q = utils.get_args_raw(message)
         if not q:
-            return await utils.answer(message, self.strings["no_args"].format(self.get_prefix(), "ggchat", "[вопрос]"))
+            return await utils.answer(message, self.strings["no_args"].format(self.get_prefix(), "gg", "[вопрос]"))
 
         await utils.answer(message, self.strings['asking_gg'])
 
