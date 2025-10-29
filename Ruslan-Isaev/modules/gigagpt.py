@@ -33,7 +33,7 @@ class RUISChatGPTMod(loader.Module):
            
     @loader.command()
     async def alice(self, message):
-        """<текст> - запрос к нейросети GigaChat"""
+        """<текст> - запрос к Алисе"""
         chat = bot1[1]
         reply = await message.get_reply_message()
         text = reply.raw_text if reply else message.text[5:]
@@ -55,7 +55,7 @@ class RUISChatGPTMod(loader.Module):
              await response2.delete()
              return
             else:
-             await utils.answer(message, f"❓<b>Вопрос:</b> \n{text}\n\n🤖 <b>Ответ нейросети:</b>\n{response1.text}")
+             await utils.answer(message, f"❓<b>Вопрос:</b> \n{text}\n\n💅🏻 <b>Ответ Алисы:</b>\n{response1.text}")
              await response.delete()
              await response1.delete()
 
