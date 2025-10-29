@@ -23,7 +23,7 @@ class AliceGPT(loader.Module):
         reply = await message.get_reply_message()
         text = reply.raw_text if reply else message.text[5:]
         if len(text) < 3:
-         await utils.answer(message, "🚫<b>Ошибка!\nСлишком короткий запрос.</b>")
+         await utils.answer(message, "🤦🏼‍♀️<b>Кошмар!\nСлишком короткий запрос.</b>")
          return
         await utils.answer(message, "💅🏻<b>Алиса думает...</b>")
         async with message.client.conversation(bot1[0]) as conv:
@@ -34,10 +34,12 @@ class AliceGPT(loader.Module):
             
             if "Начинаю творить, вернусь через несколько секунд" or "Рисую, через несколько секунд будет готово" in response1.text:
              response2 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
-             await utils.answer(message, f"🤷🏼‍♀️ <b>твой вопрос:</b> \n{text}\n\n💅🏻 <b>Ответ Алисы:</b>\n{response2}")
+             await utils.answer(message, f"🤷🏼‍♀️ <b>твой вопрос:</b> \n{text}\n\n💅🏻 <b>Ответ Алисы:</b>\n{response2.text}")
+             response3 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
              await response.delete()
              await response1.delete()
              await response2.delete()
+             await response3.delete()
              return
             else:
              await utils.answer(message, f"🤷🏼‍♀️ <b>твой вопрос:</b> \n{text}\n\n💅🏻 <b>Ответ Алисы:</b>\n{response1.text}")
