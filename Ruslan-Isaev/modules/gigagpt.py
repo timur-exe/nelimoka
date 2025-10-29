@@ -12,11 +12,11 @@ from .. import loader, utils
 bot = ["@GPTChatRBot", 5989217330]
 bot1 = ["@alice_ya_bot", 8310045254]
 @loader.tds
-class RUISChatGPTMod(loader.Module):
-    """ChatGPT 3, Gigachat без API ключа и с контекстом. Бот, который используется для запросов: @Gigachat_bot и @GPTChatRBot. Модуль распространяется по лицензии MIT."""
+class AliceGPT(loader.Module):
+    """ALICE GPT"""
 
     strings = {
-        "name": "AliceGpt",
+        "name": "AliceGPT",
     }
             	
     @loader.command()
