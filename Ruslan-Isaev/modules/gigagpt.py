@@ -35,7 +35,7 @@ class AliceGPT(loader.Module):
             if "Начинаю творить, вернусь через несколько секунд" or "Рисую, через несколько секунд будет готово" in response1.text:
              response2 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
              await utils.answer(message, f"🤷🏼‍♀️ <b>твой вопрос:</b> \n{text}\n\n💅🏻 <b>Ответ Алисы:</b>\n{response2.text}")
-             response3 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
+             await utils.answer(message, {response3})
              await response.delete()
              await response1.delete()
              await response2.delete()
@@ -46,6 +46,8 @@ class AliceGPT(loader.Module):
              await response.delete()
              await response1.delete()
 
+             response3 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
+             await response3.delete()
             	
     @loader.command()
     async def aliceclear(self, message):
