@@ -34,21 +34,21 @@ class AliceGPT(loader.Module):
             
             if "Начинаю творить, вернусь через несколько секунд" in response1.text:
              response2 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
-             await client.send_photo(self, message)
+             await message.client.send_file(message.to_id, media)
              await response.delete()
              await response1.delete()
              await response2.delete()
              return
             elif "Рисую, через несколько секунд будет готово" in response1.text:
              response2 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
-             await client.send_photo(self, message)
+             await message.client.send_file(message.to_id, media)
              await response.delete()
              await response1.delete()
              await response2.delete()
              return
             elif "Дайте мне несколько секунд" in response1.text:
              response2 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
-             await client.send_photo(self, message)
+             await message.client.send_file(message.to_id, media)
              await response.delete()
              await response1.delete()
              await response2.delete()
