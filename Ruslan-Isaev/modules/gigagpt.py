@@ -1,13 +1,15 @@
+from .. import loader, utils
+from telethon.tl.types import Message
+from telethon import functions
+from telethon import events
+from datetime import timedelta
+import random
 version = (1, 0, 0)
 
-import random
-from datetime import timedelta
-from telethon import events
-from telethon import functions
-from telethon.tl.types import Message
-from .. import loader, utils
 
 bot1 = ["@alice_ya_bot", 8310045254]
+
+
 @loader.tds
 class AliceGPT(loader.Module):
     """ALICE GPT"""
@@ -15,7 +17,7 @@ class AliceGPT(loader.Module):
     strings = {
         "name": "AliceGPT",
     }
-            	
+
     @loader.command()
     async def alice(self, message):
         """<текст> - запрос к Алисе"""
@@ -27,11 +29,11 @@ class AliceGPT(loader.Module):
          return
         await utils.answer(message, "💅🏻 <b>Алиса думает...</b>")
         async with message.client.conversation(bot1[1]) as conv:
-            
+
             response = await conv.send_message(text)
-            
+
             response1 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
-            
+
             if "Начинаю творить, вернусь через несколько секунд" in response1.text:
         response2 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
             await message.client.send_file(chat, photo)
@@ -41,7 +43,7 @@ class AliceGPT(loader.Module):
             await response2.delete()
              return
             elif "Рисую, через несколько секунд будет готово" in response1.text:
-             response2 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
+             response2=await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
               await message.client.send_file(chat, photo)
               await message.client.send_file(message.to_id, response2.media))
               await response.delete()
@@ -49,7 +51,7 @@ class AliceGPT(loader.Module):
              await response2.delete()
              return
             elif "Дайте мне несколько секунд" in response1.text:
-             response2 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
+             response2=await conv.wait_event(events.NewMessage(incoming = True, from_users = chat))
             await message.client.send_file(chat, photo)
         await message.client.send_file(message.to_id, response2.media))
              await response.delete()
@@ -61,14 +63,14 @@ class AliceGPT(loader.Module):
              await response.delete()
              await response1.delete()
 
-    @loader.command()
+    @ loader.command()
     async def aliceclear(self, message):
         """- очищает историю переписки с Алисой (контекст)"""
-        chat = bot1[1]
-        text = "🧹 Новый диалог"
+        chat=bot1[1]
+        text="🧹 Новый диалог"
         async with message.client.conversation(bot1[0]) as conv:
-            response = await conv.send_message(text)
-            response1 = await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
+            response=await conv.send_message(text)
+            response1=await conv.wait_event(events.NewMessage(incoming=True, from_users=chat))
             await utils.answer(message, "✅<b>Контекст успешно очищен!</b>")
             await response.delete()
             await response1.delete()
